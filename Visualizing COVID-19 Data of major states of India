@@ -1,0 +1,217 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as snsimport urllib.request as url
+import json
+path = "https://data.covid19india.org/states_daily.json"
+response = url.urlopen(path)
+data = json.load(response)
+states = data["states_daily"]
+df = pd.DataFrame(states)
+
+#converting data type
+df["dateymd"] = pd.to_datetime(df["dateymd"])  #to convert into date-time format
+
+df["dl"] = df["dl"].astype("int")
+df["up"] = df["up"].astype("int")
+df["tn"] = df["tn"].astype("int")
+df["rj"] = df["rj"].astype("int")
+df["mh"] = df["mh"].astype("int")
+df["tt"] = df["tt"].astype("int")
+
+
+#separating the three types of cases , that is , confirmed , deceased and recovered
+confirmed_df = df[df['status'] == "Confirmed"]
+recovered_df = df[df['status'] == "Recovered"]
+deceased_df = df[df['status'] == "Deceased"]
+
+plt.style.use("ggplot")
+print("Share of each type of cases in India")
+pie1 = pd.value_counts(df["status"]) #value_counts is a function within pandas used to count the value for each element of the key specified
+print(pie1)
+plt.pie(pie1 ,labels = ["Confirmed ", "Recovered" , "Deceased"] , colors = ["crimson" , "thistle" , "firebrick"])
+plt.legend(title = "Type" ,bbox_to_anchor=(-0,0.8), loc="lower right")
+plt.title("Share of the types of cases")
+plt.show()
+
+print("Average cases in India")
+print("Confirmed cases " ,confirmed_df["tt"].mean())
+print("Recovered cases " ,recovered_df["tt"].mean())
+print("Deceased cases " ,deceased_df["tt"].mean())
+x = np.array(["Confirmed" , "Recovered" , "Deceased"])
+y= np.array([confirmed_df["tt"].mean(),recovered_df["tt"].mean(),deceased_df["tt"].mean()])
+plt.bar(x,y)
+plt.show()
+
+print ("Share of each type of cases for each of the five states : DELHI(dl) ,UTTAR PRADESH(up), MAHARASHTRA(mh) , RAJASTHAN(rj) , TAMIL NADU(tn)")
+print ('CONFIRMED CASES')
+for i in range(1,6) :
+  def v(i) :
+    if i==1 :
+      j = "dl"
+    elif i==2 :
+      j = "up"
+    elif i==3 :
+      j = "mh"
+    elif i == 4 :
+      j = "rj"
+    else :
+      j = "tn"
+    i = i+1
+    return j
+  
+  print(v(i), "-" , confirmed_df[v(i)].sum() )
+
+
+print ('''
+RECOVERED CASES''')
+For i in range(1,6) :
+  def v(i) :
+    if i==1 :
+      j = "dl"
+    elif i==2 :
+      j = "up"
+    elif i==3 :
+      j = "mh"
+    elif i == 4 :
+      j = "rj"
+    else :
+      j = "tn"
+    i = i+1
+    return j
+  
+  print(v(i), "-" , recovered_df[v(i)].sum() )
+
+
+print ('''
+DECEASED CASES''')
+for i in range(1,6) :
+  def v(i) :
+    if i==1 :
+      j = "dl"
+    elif i==2 :
+      j = "up"
+    elif i==3 :
+      j = "mh"
+    elif i == 4 :
+      j = "rj"
+    else :
+      j = "tn"
+    i = i+1
+    return j
+  
+  print(v(i), "-" , deceased_df[v(i)].sum() )
+
+plt.figure(figsize=(10,6))
+plt.plot(confirmed_df["dateymd"], confirmed_df["dl"] , label = "Delhi" )
+plt.plot(confirmed_df["dateymd"], confirmed_df["up"] , label = "Uttar Pradesh" )
+plt.plot(confirmed_df["dateymd"], confirmed_df["mh"] , label = "Maharashtra" )
+plt.plot(confirmed_df["dateymd"], confirmed_df["rj"] , label = "Rajasthan")
+plt.plot(confirmed_df["dateymd"], confirmed_df["tn"] , label = "Tamil Nade" )
+plt.title("Total Confirmed Cases in Delhi,Uttar Pradesh , Maharashtra , Rajasthan and Tamil Nadu ")
+plt.xlabel("Date")
+plt.ylabel("Cases")
+plt.legend()
+plt.show()
+
+
+plt.figure(figsize=(10,6))
+plt.plot(recovered_df["dateymd"], recovered_df["dl"] , label = "Delhi" )
+plt.plot(recovered_df["dateymd"], recovered_df["up"] , label = "Uttar Pradesh" )
+plt.plot(recovered_df["dateymd"], recovered_df["mh"] , label = "Maharashtra" )
+plt.plot(recovered_df["dateymd"], recovered_df["rj"] , label = "Rajasthan")
+plt.plot(recovered_df["dateymd"], recovered_df["tn"] , label = "Tamil Nade" )
+plt.title("Total Recovered Cases in Delhi,Uttar Pradesh , Maharashtra , Rajasthan and Tamil Nadu ")
+plt.xlabel("Date")
+plt.ylabel("Cases")
+plt.legend()
+plt.show()
+
+
+plt.figure(figsize=(10,6))
+plt.plot(deceased_df["dateymd"], deceased_df["dl"] , label = "Delhi" )
+plt.plot(deceased_df["dateymd"], deceased_df["up"] , label = "Uttar Pradesh" )
+plt.plot(deceased_df["dateymd"], deceased_df["mh"] , label = "Maharashtra" )
+plt.plot(deceased_df["dateymd"], deceased_df["rj"] , label = "Rajasthan")
+plt.plot(deceased_df["dateymd"], deceased_df["tn"] , label = "Tamil Nade" )
+plt.title("Total Deceased Cases in Delhi,Uttar Pradesh , Maharashtra , Rajasthan and Tamil Nadu ")
+plt.xlabel("Date")
+plt.ylabel("Cases")
+plt.legend()
+plt.show()
+
+print('''Share of each type of cases
+''')
+y =np.array( [confirmed_df["dl"].sum() , confirmed_df["up"].sum(),confirmed_df["mh"].sum(),confirmed_df["rj"].sum(),confirmed_df["tn"].sum()] )
+plt.pie(y,labels = ["Delhi ", "Uttar Pradesh" , "Maharashtra", "Rajasthan","Tamil Nadu"] , colors = ['lightcoral','beige','lightseagreen','plum','navajowhite'])
+plt.legend(title = "State" ,bbox_to_anchor=(-0,0.8), loc="lower right")
+plt.title("Confirmed cases")
+plt.show()
+
+
+y =np.array( [recovered_df["dl"].sum() , recovered_df["up"].sum(),recovered_df["mh"].sum(),recovered_df["rj"].sum(),recovered_df["tn"].sum()] )
+plt.pie(y,labels = ["Delhi ", "Uttar Pradesh" , "Maharashtra", "Rajasthan","Tamil Nadu"] , colors = ['lightcoral','beige','lightseagreen','plum','navajowhite'])
+plt.title("Recovered cases")
+plt.show()
+
+
+y =np.array( [deceased_df["dl"].sum() , deceased_df["up"].sum(),deceased_df["mh"].sum(),deceased_df["rj"].sum(),deceased_df["tn"].sum()] )
+plt.pie(y,labels = ["Delhi ", "Uttar Pradesh" , "Maharashtra", "Rajasthan","Tamil Nadu"],colors = ['lightcoral','beige','lightseagreen','plum','navajowhite'])
+plt.title("Deceased cases")
+plt.show()
+
+maxcnfcases = confirmed_df["tt"].max()
+print("Maximum number of confirmed cases of India are" , maxcnfcases)
+print ('which was on')
+maxIndex = confirmed_df["tt"].argmax()
+print(confirmed_df.iloc[maxIndex]["date"])
+
+confirmed_df.sort_values(by="tt" , ascending = False).head(10)["tt"] # to get the top 10 max values of total confirmed cases
+confirmed_df.sort_values(by="tt" , ascending = False).head(10)[["dl","mh","rj","tt"]].reset_index(drop=True) #to get the top 10 max values of confirmed cases for Delhi, Maharashtra , Rajasthan and India
+
+df.groupby("status") #groups the data into three groups according to the status so that we can use the dataframe directly without separating the three categories and performing operations separately
+
+df.groupby("status")["tt"].sum()
+df.groupby("status")["dl"].count()
+
+#getting a barplot
+plt.figure(figsize=(10,6))
+plt.plot(confirmed_df["dateymd"], confirmed_df["tt"] )
+plt.title("Total Confirmed Cases in India ")
+plt.xlabel("Date")
+plt.ylabel("Cases")
+plt.show
+
+#getting a scatterplot
+plt.figure(figsize=(10,6))
+plt.scatter(confirmed_df["dateymd"], confirmed_df["tt"] , marker = "o", s =10)
+plt.title("Total Confirmed Cases in India ")
+plt.xlabel("Date")
+plt.ylabel("Cases")
+plt.show()
+
+#getting the top 10 total cases
+
+
+top_10 = confirmed_df.sort_values(by="tt" , ascending = False).head(10)[["dl","mh","rj","tt"]].reset_index(drop=True) #to get the top 10 max values of confirmed cases for Delhi, Maharashtra , Rajasthan and India
+axes = top_10["dl"].plot.bar(width =0.9 , color =sns.color_palette("inferno"))
+for ax inaxes.patches: #patches refers to bars , bar 1 bar 2 bar 3 bar 4 etc.
+  axes.annotate(format(ax.get_height()),(ax.get_x()+0.1, ax.get_height()+100))
+plt.figure(figsize=(10,6))
+plt.show()
+
+
+
+states = ["tt","dl","up","mh","rj","tn"]
+labels =["Total","Delhi","UttarPradesh","Maharashtra","Rajasthan","Tamil Nadu"]
+
+
+plt.figure(figsize = (25,30))
+for i in range(6):
+  plt.subplot(2,3,i+1)
+  plt.plot(confirmed_df["dateymd"], confirmed_df[states[i]])
+  plt.title("{} Cases".format(labels[i]))
+  plt.xlabel("Date")
+  plt.ylabel("Cases")
+  plt.show()
+
